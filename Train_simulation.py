@@ -80,18 +80,26 @@ class CAT(nn.Module) :
             weights = all_auto_encoders[min_idx].state_dict()
             self.network.MultiAutoEncoder.autoEncoders[i].load_state_dict(weights)
             
-    def compute_autoEnccoder_loss(self , auto_endocer , i ) : 
-        loss =0
-        number = 0  
-        for x , _ in self.data.load_train : 
-            a = x.shape[0]
-            inp = x[: , 1 ,: ,i]
-            _ , decoder_out  = auto_endocer(inp)
-            loss += a * self.L1Loss(inp,decoder_out)
-            number += a 
-        loss = loss / number
-        return loss 
+    def compute_autoEnccoder_loss(self, auto_encoder, i):
+        total_loss = 0.0
+        total_samples = 0  
 
+        for x, _, mask in self.data.train_loader:
+            x = x.to(self.device)
+            mask = mask.to(self.device)
+            b, seq_len, _ = x.shape
+            inp = x[:, :, i].reshape(-1, 1)  # (b*seq_len, 1)
+            _, decoder_out = auto_encoder(inp)
+            decoder_out = decoder_out.reshape(b, seq_len)
+            # mask valid positions only
+            masked_inp = inp.reshape(b, seq_len) * mask
+            masked_out = decoder_out * mask
+            # compute L1 loss
+            batch_loss = self.L1Loss(masked_inp, masked_out)
+            total_loss += batch_loss.item() * b
+            total_samples += b
+        mean_loss = total_loss / total_samples
+        return mean_loss
 
 
 
