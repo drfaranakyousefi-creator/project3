@@ -63,7 +63,7 @@ class CAT(nn.Module) :
         number = 0 
         for x , l , mask in self.data.test_loader :  
             l = l.to(self.device)
-            v   = self.network(x.to(self.device) , mask)
+            v   = self.network(x.to(self.device) , mask  ,train=False)
             prediction = self.transmittion.send_data(v, l , status='test')
             loss_test +=x.shape[0] * self.loss_fn(prediction.to(self.device) , l )
             number += x.shape[0]
