@@ -16,16 +16,14 @@ class CAT(nn.Module) :
         else:
             self.N =5
         self.network = ClientNetwork(self.N, d_latent, h, dropout, seq_len, cap_in_dim , lr).to(device)
-        print('network is made')
         chartevents_path = "/content/drive/MyDrive/split_learning/CHARTEVENTS.csv"
         #chartevents_path = "./CHARTEVENTS.csv"
 
         df_chartevents = pd.read_csv(chartevents_path)
         self.data = data_preparing(df_chartevents ,dataset_name , seq_len , test_size , target  ,batch_size)
-        print('data is made')
         self.transmittion = Transmitter(cap_in_dim , device)
-        print('transmitter is made')
         self.batch_size = batch_size 
+        self.L1Loss= nn.L1Loss()
         self.loss_fn = nn.MSELoss()
     def fit(self , epochs ): 
         history = {
@@ -65,7 +63,7 @@ class CAT(nn.Module) :
         number = 0 
         for x , l , mask in self.data.test_loader :  
             l = l.to(self.device)
-            v   = self.network(x.to(self.device))
+            v   = self.network(x.to(self.device) , mask)
             prediction = self.transmittion.send_data(v, l , status='test')
             loss_test +=x.shape[0] * self.loss_fn(prediction.to(self.device) , l )
             number += x.shape[0]
@@ -93,7 +91,6 @@ class CAT(nn.Module) :
             number += a 
         loss = loss / number
         return loss 
-
 
 
 
