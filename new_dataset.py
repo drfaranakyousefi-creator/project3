@@ -52,7 +52,11 @@ def extract_data_from_person(dataframe , W , dataset_name , target) :
 
     #data _order for metavision : (heart rate , respiratory rate , Non-invasive BP Mean , Arterial BP Mean)
     #data order for 'carevue' is (heart rate, respiratory rate, arterial BP mean, NBP mean, temperature)
-
+        if s >= W : 
+            s = 0
+            m = torch.zeros(W)
+            x = torch.zeros(W , N)
+            
         if (item_id == 646) |  (item_id==220277) :  # spo2
             if target == 'spO2' :  
                 if  s > 0 :
@@ -199,5 +203,4 @@ class data_preparing :
         test_dataset = data(x[train_number: , : , : ] , y[train_number:] , mask[train_number: , :])
         self.train_loader = DataLoader(train_dataset , batch_size , shuffle=True)
         self.test_loader = DataLoader(test_dataset ,  batch_size , shuffle=True)
-
 
