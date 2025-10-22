@@ -99,7 +99,7 @@ class CAT(nn.Module) :
             total_loss += batch_loss.item() * b
             total_samples += b
         mean_loss = total_loss / total_samples
-        return mean_loss
+        return torch.tensor(mean_loss)
 
 
 
