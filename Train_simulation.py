@@ -78,7 +78,7 @@ class CAT(nn.Module) :
             min_idx = torch.argmin(torch.stack(l1Loss))
             print(f'the feature {i} chooses the autocoder {min_idx}')
             weights = all_auto_encoders[min_idx].state_dict()
-            self.network.MultiAutoEncoder.autoEncoders[i].load_state_dict(weights)
+            self.network.multi_autoEncoder.auto_encoders[i].load_state_dict(weights)
             
     def compute_autoEnccoder_loss(self, auto_encoder, i):
         total_loss = 0.0
