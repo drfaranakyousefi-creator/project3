@@ -218,7 +218,7 @@ class ClientNetwork(nn.Module):
 
         out_attention = self.resudal_connection(
             out_encoder,
-            lambda x: self.attention(x, x, x, mask)[0]  # attention returns (out, scores)
+            lambda x: self.attention(x, x, x, mask)  # attention returns (out, scores)
         )
 
         v, out_decoder2 = self.compressor(out_attention, mask)
@@ -239,4 +239,5 @@ class ClientNetwork(nn.Module):
         self.optimizer.zero_grad()
 
         
+
 
